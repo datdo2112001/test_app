@@ -21,7 +21,6 @@ jobs:
           name: Which bundler?
           command: bundle -v
       - run: bundle install
-      - heroku/deploy-via-git
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
@@ -29,3 +28,9 @@ workflows:
   heroku_deploy:
     jobs:
       - build
+      - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
