@@ -6,7 +6,7 @@ version: 2.1
 # See: https://circleci.com/docs/2.0/orb-intro/
 orbs:
   ruby: circleci/ruby@1.4.0
-  rubocop: hanachin/rubocop@0.0.6
+  heroku: circleci/heroku@1.2.6
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -21,12 +21,16 @@ jobs:
           name: Which bundler?
           command: bundle -v
       - run: bundle install
-      - rubocop/rubocop
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  heroku_deploy:
     jobs:
       - build
+      - heroku/deploy-via-git:  
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
